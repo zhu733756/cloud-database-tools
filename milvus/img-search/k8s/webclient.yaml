@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: img-search-webclient
+  labels:
+    app: img-search-webclient
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: img-search-webclient
+  template:
+    metadata:
+      labels:
+        app: img-search-webclient
+    spec:
+      containers:
+        - name: webclient
+          image: milvusbootcamp/img-search-client:2.2.10
+          env:
+            - name: API_URL
+              value: 'http://img-search-webserver:5000' # 这里假设通过服务名进行通信
+          ports:
+            - containerPort: 80

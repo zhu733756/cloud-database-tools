@@ -1,0 +1,44 @@
+version: '3.5'
+
+services:
+  mysql:
+    container_name: img-search-mysql
+    image: mysql:5.7
+    network_mode: host
+    environment:
+      - MYSQL_ROOT_PASSWORD=123456
+    ports:
+      - "3306:3306"
+
+  webserver:
+    container_name: img-search-webserver
+    image: milvusbootcamp/img-search-server:2.2.10
+    network_mode: host
+    environment:
+      MILVUS_HOST: '172.18.0.4'
+      MILVUS_PORT: '30774'
+      MYSQL_HOST: '127.0.0.1'
+      HTTP_PROXY: "http://192.168.163.1:7890"
+      HTTPS_PROXY: "http://192.168.163.1:7890"
+    volumes:
+      - ./data:/data
+    restart: always
+    depends_on:
+      - mysql
+    ports:
+      - "5000:5000"
+
+  webclient:
+    container_name: img-search-webclient
+    image: milvusbootcamp/img-search-client:2.2.10
+    environment:
+      HTTP_PROXY: "http://192.168.163.1:7890"
+      HTTPS_PROXY: "http://192.168.163.1:7890"
+      API_URL: 'http://127.0.0.1:5000'
+    ports:
+      - "8001:80"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:8001"]
+      interval: 30s
+      timeout: 20s
+      retries: 3

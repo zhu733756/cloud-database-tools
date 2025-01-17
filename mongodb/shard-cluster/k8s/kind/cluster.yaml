@@ -1,0 +1,32 @@
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+nodes:
+- role: control-plane
+  extraPortMappings:
+  - containerPort: 31000  # 将主机 31000 端口映射到容器的 31000 端口
+    hostPort: 31000
+    listenAddress: "0.0.0.0" # Optional, defaults to "0.0.0.0"
+    protocol: tcp # Optional, defaults to tcp
+- role: worker
+- role: worker
+- role: worker
+kubeadmConfigPatches:
+- |
+  apiVersion: kubeadm.k8s.io/v1beta3
+  kind: ClusterConfiguration
+  metadata:
+    name: config
+  networking:
+    serviceSubnet: 10.0.0.0/16
+  imageRepository: registry.aliyuncs.com/google_containers
+  nodeRegistration:
+    kubeletExtraArgs:
+      pod-infra-container-image: registry.aliyuncs.com/google_containers/pause:3.1
+- |
+  apiVersion: kubeadm.k8s.io/v1beta3
+  kind: InitConfiguration
+  metadata:
+    name: config
+  networking:
+    serviceSubnet: 10.0.0.0/16
+  imageRepository: registry.aliyuncs.com/google_containers

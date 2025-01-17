@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: img-search-webserver
+  labels:
+    app: img-search-webserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: img-search-webserver
+  template:
+    metadata:
+      labels:
+        app: img-search-webserver
+    spec:
+      containers:
+      - name: webserver
+        image: milvusbootcamp/img-search-server:2.2.10
+        env:
+        - name: MILVUS_HOST
+          value: "172.16.238.10"
+        - name: MYSQL_HOST
+          value: "img-search-mysql"  # 这里假设通过服务名进行通信
+        volumeMounts:
+        - name: data-volume
+          mountPath: /data
+        ports:
+        - containerPort: 5000
+      volumes:
+      - name: data-volume
+        hostPath:
+          path: ./data
