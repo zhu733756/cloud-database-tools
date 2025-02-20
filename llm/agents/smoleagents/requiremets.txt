@@ -1,0 +1,4 @@
+#https://pypi.org/project/importlib-resources/
+importlib-resources
+smolagents
+litellm
